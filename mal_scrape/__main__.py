@@ -4,12 +4,8 @@ import mal_scrape
 
 def main():
     parser = argparse.ArgumentParser(description="Fetch MAL data")
-
-    subparsers = parser.add_subparsers(help='sub-command help')
-
-    info_parser = subparsers.add_parser('info', help='Get Info')
-    info_parser.add_argument('url', type=str, help='URL of MAL page')
-    info_parser.set_defaults(function=getInfo)
+    parser.add_argument('query', type=str, nargs=None, help='The Query string')
+    parser.set_defaults(function=getInfo)
 
     args = parser.parse_args()
     try:
@@ -19,9 +15,10 @@ def main():
 
 def getInfo(args):
     """
-    Gets info from page
+    Searches for the Anime Gets info from page
     """
-    print(mal_scrape.basicData(args.url)) 
+    mal = mal_scrape.Mal_scrape(args.query)
+    print(mal.getAnime()) 
 
 if __name__ == "__main__":
     main()
