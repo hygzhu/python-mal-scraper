@@ -18,7 +18,7 @@ def getInfo(args):
     Searches for the Anime Gets info from page
     """
     mal = mal_scrape.Mal_scrape(args.query)
-    print(mal.getAnime()) 
+    print(mal.getAnimeInfo()) 
 
 if __name__ == "__main__":
     main()
