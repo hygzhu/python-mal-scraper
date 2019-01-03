@@ -18,7 +18,48 @@ class Mal_scrape:
     def __init__(self, query):
         self.query = query
         self.data = {}
-        self.searchAnime()
+        self.seasonalData = {}
+
+    def getSeasonal(self, start, end):
+        """
+        Queries for anime by season and adds to data
+        """
+        seasons = ["winter", "spring", "summer", "fall"]
+
+        for year in range(start, end + 1):
+            for season in seasons:
+                key = str(season) + str(year)
+                try:
+                    page = requests.get("https://myanimelist.net/anime/season/{}/{}".format(year, season))
+                    if(page.url == "https://myanimelist.net/anime/season"):
+                        log('Could not get get Anime for year {} {} because the page does not exist'.format(year, season))
+                        print(key + " ------------------------------------- total: 0")
+                        continue
+                    soup = BeautifulSoup(page.content, 'lxml')
+                    seasonal_list_new = soup.find('div', class_='seasonal-anime-list js-seasonal-anime-list js-seasonal-anime-list-key-1 clearfix').find_all('div', class_='seasonal-anime js-seasonal-anime')
+                    #log(len(seasonal_list_new))
+                    for anime_div in seasonal_list_new:
+                        showData = {}
+                        showData["name"] = anime_div.find('a', class_='link-title').text
+                        showData["members"] = int(anime_div.find('span', class_='member fl-r').text.strip().replace(',', ''))
+                        if key not in self.seasonalData.keys():
+                            self.seasonalData[key] = []
+                        else:
+                            self.seasonalData[key].append(showData)
+                    #Print out the season and seasonal anime with more than 50k members
+                    filtered = list(filter(lambda x: x["members"] >= 50000,self.seasonalData[key]))
+                    print(key + " ------------------------------------- total: " + str(len(filtered)))
+                    for i in filtered:
+                        #print( "{0:10} {1}".format(str(i["members"]), i["name"]))
+                        print( "{}".format(i["name"]))
+
+                except Exception as e:
+                    log('Could not get get Anime for year {} {} Error: {}'.format(year, season, str(e)))
+                else:
+                    log('Found anime for year {} {}'.format(year, season))
+        #log(self.seasonalData)
+            
+
 
     def searchAnime(self):
         """

@@ -26,5 +26,6 @@ pip3 install -r requirements.txt
 
 # Usage 
 ```
-python mal_scrape [query]
+python mal_scrape [--query [anime name]]
+python mal_scrape [--getSeasonal]
 ```
